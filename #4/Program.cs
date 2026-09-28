@@ -1,4 +1,5 @@
 using _1;
+using Shared;
 
 namespace _4;
 
@@ -6,15 +7,15 @@ public static class Program
 {
     public static void Main()
     {
-        IModularExponentiation pow = new ModularExponentiation();
-        IExtendedEuclideanAlgorithm gcd = new ExtendedEuclideanAlgorithm();
-        IRandomNumberGenerator random = new SecureRandomNumberGenerator();
-        IPrimalityTest primality = new FermatPrimalityTest(gcd, pow, random);
-        IShamirKeyGenerator keyGenerator = new ShamirKeyGenerator(random, primality, gcd);
-        IShamirTransformer transformer = new ShamirTransformer(pow);
-        IShamirFileService fileService = new ShamirFileService(transformer);
-        IParameterPresentationService presentation = new ParameterPresentationService();
+        IModularExponentiation modularExponentiation = new ModularExponentiation();
+        IExtendedEuclideanAlgorithm extendedEuclideanAlgorithm = new ExtendedEuclideanAlgorithm();
+        IRandomNumberGenerator randomNumberGenerator = new SecureRandomNumberGenerator();
+        IPrimalityTest primalityTest = new FermatPrimalityTest(extendedEuclideanAlgorithm, modularExponentiation, randomNumberGenerator);
 
-        new ConsoleUi(keyGenerator, fileService, presentation).Run();
+        var algorithm = new ShamirAlgorithm(modularExponentiation);
+        IFileProcessingService fileProcessingService = new FileProcessingService();
+        var ui = new ConsoleUi(algorithm, randomNumberGenerator, primalityTest, extendedEuclideanAlgorithm, fileProcessingService);
+
+        ui.Run();
     }
 }

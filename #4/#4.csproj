@@ -7,9 +7,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\#1\#1.csproj" />
+    <ProjectReference Include="../Shared/Shared.csproj" />
+    <ProjectReference Include="../#1/#1.csproj" />
   </ItemGroup>
 
 </Project>
