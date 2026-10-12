@@ -11,7 +11,12 @@ public sealed class FileProcessingService : IFileProcessingService
         int blocksPerByte,
         Func<byte, IReadOnlyList<BigInteger>> transform)
     {
-        ValidateArguments(inputPath, outputPath, blockWidth, blocksPerByte, transform);
+        ValidateArguments(
+            inputPath,
+            outputPath,
+            blockWidth,
+            blocksPerByte,
+            transform);
 
         long processedBytes = 0;
 
@@ -27,8 +32,8 @@ public sealed class FileProcessingService : IFileProcessingService
             FileShare.None);
 
         var buffer = new byte[8192];
-
         int read;
+
         while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
         {
             for (var i = 0; i < read; i++)
@@ -63,7 +68,12 @@ public sealed class FileProcessingService : IFileProcessingService
         int blocksPerByte,
         Func<IReadOnlyList<BigInteger>, byte> transform)
     {
-        ValidateArguments(inputPath, outputPath, blockWidth, blocksPerByte, transform);
+        ValidateArguments(
+            inputPath,
+            outputPath,
+            blockWidth,
+            blocksPerByte,
+            transform);
 
         long processedBytes = 0;
 
@@ -83,13 +93,13 @@ public sealed class FileProcessingService : IFileProcessingService
 
         while (true)
         {
-            var firstRead = ReadExact(input, block);
-            if (firstRead == 0)
+            var read = ReadExact(input, block);
+            if (read == 0)
             {
                 break;
             }
 
-            if (firstRead != blockWidth)
+            if (read != blockWidth)
             {
                 throw new InvalidDataException(
                     "Размер зашифрованного файла не кратен размеру блока.");
@@ -99,8 +109,8 @@ public sealed class FileProcessingService : IFileProcessingService
 
             for (var i = 1; i < blocksPerByte; i++)
             {
-                var read = ReadExact(input, block);
-                if (read != blockWidth)
+                var blockRead = ReadExact(input, block);
+                if (blockRead != blockWidth)
                 {
                     throw new InvalidDataException(
                         "Зашифрованный файл содержит неполный блок.");
