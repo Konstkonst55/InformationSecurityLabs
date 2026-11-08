@@ -21,8 +21,7 @@ public sealed class SignatureDocumentStore : ISignatureDocumentStore
             Directory.CreateDirectory(directory);
         }
 
-        var json = JsonSerializer.Serialize(document, SerializerOptions);
-        File.WriteAllText(filePath, json);
+        File.WriteAllText(filePath, JsonSerializer.Serialize(document, SerializerOptions));
     }
 
     public SignatureDocument Load(string filePath)
@@ -34,16 +33,16 @@ public sealed class SignatureDocumentStore : ISignatureDocumentStore
             throw new FileNotFoundException("Файл подписи не найден.", filePath);
         }
 
-        var json = File.ReadAllText(filePath);
-        var document = JsonSerializer.Deserialize<SignatureDocument>(json, SerializerOptions);
-
+        var document = JsonSerializer.Deserialize<SignatureDocument>(File.ReadAllText(filePath), SerializerOptions);
         if (document is null ||
             string.IsNullOrWhiteSpace(document.Algorithm) ||
             string.IsNullOrWhiteSpace(document.HashAlgorithm) ||
             document.PublicParameters is null ||
             document.PublicParameters.Count == 0 ||
             document.SignatureValues is null ||
-            document.SignatureValues.Count == 0)
+            document.SignatureValues.Count != 1 ||
+            document.SignatureValues[0] is null ||
+            document.SignatureValues[0].Count != 2)
         {
             throw new InvalidDataException("Файл подписи имеет неверный формат.");
         }
