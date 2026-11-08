@@ -15,6 +15,12 @@ public sealed class SignatureDocumentStore : ISignatureDocumentStore
         ValidatePath(filePath);
         ArgumentNullException.ThrowIfNull(document);
 
+        var directory = Path.GetDirectoryName(Path.GetFullPath(filePath));
+        if (!string.IsNullOrEmpty(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
         var json = JsonSerializer.Serialize(document, SerializerOptions);
         File.WriteAllText(filePath, json);
     }
@@ -22,6 +28,7 @@ public sealed class SignatureDocumentStore : ISignatureDocumentStore
     public SignatureDocument Load(string filePath)
     {
         ValidatePath(filePath);
+
         if (!File.Exists(filePath))
         {
             throw new FileNotFoundException("Файл подписи не найден.", filePath);
@@ -29,6 +36,7 @@ public sealed class SignatureDocumentStore : ISignatureDocumentStore
 
         var json = File.ReadAllText(filePath);
         var document = JsonSerializer.Deserialize<SignatureDocument>(json, SerializerOptions);
+
         if (document is null ||
             string.IsNullOrWhiteSpace(document.Algorithm) ||
             string.IsNullOrWhiteSpace(document.HashAlgorithm) ||
